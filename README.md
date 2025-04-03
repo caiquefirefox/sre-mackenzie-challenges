@@ -112,19 +112,19 @@ Ajustar configurações de timeout e corrigir erro de timeout execedido ao invoc
 
 ## ✅ Solução
 
-Primeiro consultei o endpoint de health check (GET /api/health) para comprovar que está aplicação estava de pé na porta 8080 como o esperado e obtive um resultado positivo:
+Primeiro consultei o endpoint de health check (GET /api/health) para comprovar que está aplicação estava de pé na porta 8080 como o esperado e obtive um resultado positivo:<br />
 ![app-health-check](./src/challenge-1/assets/app-health-check.png)
 
-Depois consultei o endpoint com a simulação de um timeout (GET /api/timeout) que me retornou a mensagem de erro abaixo:
+Depois consultei o endpoint com a simulação de um timeout (GET /api/timeout) que me retornou a mensagem de erro abaixo:<br />
 ![challenge-error](./src/challenge-1/assets/challenge-error.png)
 
-Então identifiquei a função que simula uma chamada externa com um timer de 5 segundos:
+Então identifiquei a função que simula uma chamada externa com um timer de 5 segundos:<br />
 ![function-timer](./src/challenge-1/assets/function-timer.png)
 
-Dessa forma entendi que deveria aumentar o tempo de timeout na função que realiza a requisição que antes estava configurado em 3 segundos e passou a ser 5.5 segundos:
+Dessa forma entendi que deveria aumentar o tempo de timeout na função que realiza a requisição que antes estava configurado em 3 segundos e passou a ser 5.5 segundos:<br />
 ![timeout-endpoint](./src/challenge-1/assets/timeout-endpoint.png)
 
-E no final obtive um resultado positivo indicando sucesso na resposta da requisição:
+E no final obtive um resultado positivo indicando sucesso na resposta da requisição:<br />
 ![solution-challenge-timeout](./src/challenge-1/assets/solution-challenge-timeout.png)
 
 ---
@@ -188,19 +188,19 @@ Alterar limite de requisições permitidas para 100 num intervalo de 1 minuto e 
 
 ## ✅ Solução
 
-Fiz a primeira request ao endpoint de simulação de request (GET /api/ratelimite) e obtive mensagem de sucesso na resposta da chamada:
+Fiz a primeira request ao endpoint de simulação de request (GET /api/ratelimite) e obtive mensagem de sucesso na resposta da chamada:<br />
 ![without-rate-limit](/src/challenge-2/assets/without-rate-limit.png)
 
-Iniciei as alterações modificando a quantidade de requisições que o **express-rate-limit** aceitaria para **100 requisições por minuto**:
+Iniciei as alterações modificando a quantidade de requisições que o **express-rate-limit** aceitaria para **100 requisições por minuto**:<br />
 ![rate-limit-config](/src/challenge-2/assets/rate-limit-config.png)
 
-Depois crie um endpoint (GET api/multiple-requests/{requestsnum}) que aceita o número de requisições que eu desejo simular:
+Depois crie um endpoint (GET api/multiple-requests/{requestsnum}) que aceita o número de requisições que eu desejo simular:<br />
 ![simulate-multiple-requests-endpoint](/src/challenge-2/assets/simulate-multiple-requests-endpoint.png)
 
-Criei a função que faz a simulação das requisições e guarda a resposta de cada uma em um array que ao final é retornado como resposta:
+Criei a função que faz a simulação das requisições e guarda a resposta de cada uma em um array que ao final é retornado como resposta:<br />
 ![simulate-multiple-requests-function](/src/challenge-2/assets/simulate-multiple-requests-function.png)
 
-O resultado final foi a resposta da API indicando que o limite de requisiçoes foi excedido:
+O resultado final foi a resposta da API indicando que o limite de requisiçoes foi excedido:<br />
 ![rate-limit-exceeded](/src/challenge-2/assets/rate-limit-exceeded.png)
 
 
@@ -264,16 +264,16 @@ Aumentar quantidade de chamadas simultâneas e avaliar o comportamento.
 
 ## ✅ Solução
 
-Inicialmente fiz três requisições simultâneas em três abas diferentes ao endpoint que simula uma requisição (GET /api/bulkhead) 
+Inicialmente fiz três requisições simultâneas em três abas diferentes ao endpoint que simula uma requisição (GET /api/bulkhead):<br /> 
 ![initial-bulkhead-error](/src/challenge-3/assets/initial-bulkhead-error.png)
 
-Logo depois, comecei a modificar o código-fonte para atender aos requisitos do desafio, então criei um endpoint para simular o número de requisições que desejo fazer (GET api/multiple-requests/{requestsnum}), informando a quantidade de vezes em sua rota:
+Logo depois, comecei a modificar o código-fonte para atender aos requisitos do desafio, então criei um endpoint para simular o número de requisições que desejo fazer (GET api/multiple-requests/{requestsnum}), informando a quantidade de vezes em sua rota:<br />
 ![multiple-requests-endpoint](/src/challenge-3/assets/multiple-requests-endpoint.png)
 
-Para simular paralelismo nas requisições utilizei promises em javascript, escrevendo a função abaixo:
+Para simular paralelismo nas requisições utilizei promises em javascript, escrevendo a função abaixo:<br />
 ![parallel-multiple-requests-function](/src/challenge-3/assets/parallel-multiple-requests-function.png)
 
-E por fim, fiz um teste simulando 5 requisições simultâneas, onde as duas primeiras obtiveram sucesso e as demais foram recusadas pelo pacote cockatiel que controla o número de requisições simultâneas:
+E por fim, fiz um teste simulando 5 requisições simultâneas, onde as duas primeiras obtiveram sucesso e as demais foram recusadas pelo pacote cockatiel que controla o número de requisições simultâneas:<br />
 ![parallel-requests-response](/src/challenge-3/assets/parallel-requests-response.png)
 
 ---
