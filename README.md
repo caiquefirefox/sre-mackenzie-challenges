@@ -110,13 +110,22 @@ Ajustar configurações de timeout e corrigir erro de timeout execedido ao invoc
 
 ![Screen Shot 2024-09-13 at 21 42 04](https://github.com/user-attachments/assets/a451d1a1-ef3f-4116-8ab0-246d6548b7a3)
 
-```
-// INSIRA SUA ANÁLISE OU PARECER ABAIXO
+## ✅ Solução
 
+Primeiro consultei o endpoint de health check (GET /api/health) para comprovar que está aplicação estava de pé na porta 8080 como o esperado e obtive um resultado positivo:<br />
+![app-health-check](./src/challenge-1/assets/app-health-check.png)
 
+Depois consultei o endpoint com a simulação de um timeout (GET /api/timeout) que me retornou a mensagem de erro abaixo:<br />
+![challenge-error](./src/challenge-1/assets/challenge-error.png)
 
-```
+Então identifiquei a função que simula uma chamada externa com um timer de 5 segundos:<br />
+![function-timer](./src/challenge-1/assets/function-timer.png)
 
+Dessa forma entendi que deveria aumentar o tempo de timeout na função que realiza a requisição que antes estava configurado em 3 segundos e passou a ser 5.5 segundos:<br />
+![timeout-endpoint](./src/challenge-1/assets/timeout-endpoint.png)
+
+E no final obtive um resultado positivo indicando sucesso na resposta da requisição:<br />
+![solution-challenge-timeout](./src/challenge-1/assets/solution-challenge-timeout.png)
 
 ---
 ### 2.2 Rate Limit
@@ -177,12 +186,22 @@ Alterar limite de requisições permitidas para 100 num intervalo de 1 minuto e 
 ![Screen Shot 2024-09-13 at 22 51 23](https://github.com/user-attachments/assets/6407456d-9bb5-41bb-ba17-9cc4a5272d29)
 
 
-```
-// INSIRA SUA ANÁLISE OU PARECER ABAIXO
+## ✅ Solução
 
+Fiz a primeira request ao endpoint de simulação de request (GET /api/ratelimite) e obtive mensagem de sucesso na resposta da chamada:<br />
+![without-rate-limit](/src/challenge-2/assets/without-rate-limit.png)
 
+Iniciei as alterações modificando a quantidade de requisições que o **express-rate-limit** aceitaria para **100 requisições por minuto**:<br />
+![rate-limit-config](/src/challenge-2/assets/rate-limit-config.png)
 
-```
+Depois crie um endpoint (GET api/multiple-requests/{requestsnum}) que aceita o número de requisições que eu desejo simular:<br />
+![simulate-multiple-requests-endpoint](/src/challenge-2/assets/simulate-multiple-requests-endpoint.png)
+
+Criei a função que faz a simulação das requisições e guarda a resposta de cada uma em um array que ao final é retornado como resposta:<br />
+![simulate-multiple-requests-function](/src/challenge-2/assets/simulate-multiple-requests-function.png)
+
+O resultado final foi a resposta da API indicando que o limite de requisiçoes foi excedido:<br />
+![rate-limit-exceeded](/src/challenge-2/assets/rate-limit-exceeded.png)
 
 
 ---
@@ -243,14 +262,19 @@ Aumentar quantidade de chamadas simultâneas e avaliar o comportamento.
 
 **BÔNUS**: implementar método que utilizando threads para realizar as chamadas e logar na tela 
 
+## ✅ Solução
 
-```
-// INSIRA SUA ANÁLISE OU PARECER ABAIXO
+Inicialmente fiz três requisições simultâneas em três abas diferentes ao endpoint que simula uma requisição (GET /api/bulkhead):<br /> 
+![initial-bulkhead-error](/src/challenge-3/assets/initial-bulkhead-error.png)
 
+Logo depois, comecei a modificar o código-fonte para atender aos requisitos do desafio, então criei um endpoint para simular o número de requisições que desejo fazer (GET api/multiple-requests/{requestsnum}), informando a quantidade de vezes em sua rota:<br />
+![multiple-requests-endpoint](/src/challenge-3/assets/multiple-requests-endpoint.png)
 
+Para simular paralelismo nas requisições utilizei promises em javascript, escrevendo a função abaixo:<br />
+![parallel-multiple-requests-function](/src/challenge-3/assets/parallel-multiple-requests-function.png)
 
-```
-
+E por fim, fiz um teste simulando 5 requisições simultâneas, onde as duas primeiras obtiveram sucesso e as demais foram recusadas pelo pacote cockatiel que controla o número de requisições simultâneas:<br />
+![parallel-requests-response](/src/challenge-3/assets/parallel-requests-response.png)
 
 ---
 ### 2.4 Circuit Breaker
@@ -325,13 +349,18 @@ curl localhost:8080/api/circuitbreaker
 Ajustar o o percentual de falhas para que o circuit breaker obtenha sucesso ao receber as requisições após sua abertura.
 Observar comportamento do circuito no console.
 
-```
-// INSIRA SUA ANÁLISE OU PARECER ABAIXO
+## ✅ Solução
 
+Analisando as requisições no log do console, percebi que o circuito demorava a se recuperar de uma falha e existiam muitas falhas sendo apresentadas no console.
+Um outro ponto muito importante que gostaria de ressaltar é que a operação para calcular o percentual de falha está com o sinal invertido, ao invés de ser **Math.random() < 0.8** causando 80% de falhas, estava assim **Math.random() > 0.8** causando 20% de falhas na requisição.
 
+Com esse cenário em mente, ajustei a operação lógica e ajustei percentual de falhas para 20%:<br />
+![percent-fail-requests](/src/challenge-4/assets/percent-fail-requests.png)
 
-```
+E ajustei o percentual de falhas aceitos pelo circuito antes de abrir, deixar em 20%, ou seja, se 20% das requisições falharem, ele vai abrir:<br />
+![percent-fail-requests](/src/challenge-4/assets/circuit-breaker-error-percent.png)
 
+Após essas configurações, observei no console que apesar do circuito abrir mais rápidamente em caso de falhas, ele logo se recuperava pelo percentual baixo de falhas que foi configurado no simulador de requisições.
 ---
 ### 2.5 Health Check
 Health check é uma prática comum para monitorar o status de uma aplicação e garantir que esteja funcionando corretamente.
