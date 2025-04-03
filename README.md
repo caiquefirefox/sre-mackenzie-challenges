@@ -113,19 +113,19 @@ Ajustar configurações de timeout e corrigir erro de timeout execedido ao invoc
 ## ✅ Solução
 
 Primeiro consultei o endpoint de health check (GET /api/health) para comprovar que está aplicação estava de pé na porta 8080 como o esperado e obtive um resultado positivo:
-![app-health-check](./src/challenge-1/probes/app-health-check.png)
+![app-health-check](./src/challenge-1/assets/app-health-check.png)
 
 Depois consultei o endpoint com a simulação de um timeout (GET /api/timeout) que me retornou a mensagem de erro abaixo:
-![challenge-error](./src/challenge-1/probes/challenge-error.png)
+![challenge-error](./src/challenge-1/assets/challenge-error.png)
 
 Então identifiquei a função que simula uma chamada externa com um timer de 5 segundos:
-![function-timer](./src/challenge-1/probes/function-timer.png)
+![function-timer](./src/challenge-1/assets/function-timer.png)
 
 Dessa forma entendi que deveria aumentar o tempo de timeout na função que realiza a requisição que antes estava configurado em 3 segundos e passou a ser 5.5 segundos:
-![timeout-endpoint](./src/challenge-1/probes/timeout-endpoint.png)
+![timeout-endpoint](./src/challenge-1/assets/timeout-endpoint.png)
 
 E no final obtive um resultado positivo indicando sucesso na resposta da requisição:
-![solution-challenge-timeout](./src/challenge-1/probes/solution-challenge-timeout.png)
+![solution-challenge-timeout](./src/challenge-1/assets/solution-challenge-timeout.png)
 
 ---
 ### 2.2 Rate Limit
@@ -186,12 +186,22 @@ Alterar limite de requisições permitidas para 100 num intervalo de 1 minuto e 
 ![Screen Shot 2024-09-13 at 22 51 23](https://github.com/user-attachments/assets/6407456d-9bb5-41bb-ba17-9cc4a5272d29)
 
 
-```
-// INSIRA SUA ANÁLISE OU PARECER ABAIXO
+## ✅ Solução
 
+Fiz a primeira request ao endpoint de simulação de request (GET /api/ratelimite) e obtive mensagem de sucesso na resposta da chamada:
+![without-rate-limit](/src/challenge-2/assets/without-rate-limit.png)
 
+Iniciei as alterações modificando a quantidade de requisições que o **express-rate-limit** aceitaria para **100 requisições por minuto**:
+![rate-limit-config](/src/challenge-2/assets/rate-limit-config.png)
 
-```
+Depois crie um endpoint (GET api/multiple-requests/{requestsnum}) que aceita o número de requisições que eu desejo simular:
+![simulate-multiple-requests-endpoint](/src/challenge-2/assets/simulate-multiple-requests-endpoint.png)
+
+Criei a função que faz a simulação das requisições e guarda a resposta de cada uma em um array que ao final é retornado como resposta:
+![simulate-multiple-requests-function](/src/challenge-2/assets/simulate-multiple-requests-function.png)
+
+O resultado final foi a resposta da API indicando que o limite de requisiçoes foi excedido:
+![rate-limit-exceeded](/src/challenge-2/assets/rate-limit-exceeded.png)
 
 
 ---
