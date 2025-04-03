@@ -349,7 +349,7 @@ curl localhost:8080/api/circuitbreaker
 Ajustar o o percentual de falhas para que o circuit breaker obtenha sucesso ao receber as requisições após sua abertura.
 Observar comportamento do circuito no console.
 
-# ✅ Solução
+## ✅ Solução
 
 Analisando as requisições no log do console, percebi que o circuito demorava a se recuperar de uma falha e existiam muitas falhas sendo apresentadas no console.
 Um outro ponto muito importante que gostaria de ressaltar é que a operação para calcular o percentual de falha está com o sinal invertido, ao invés de ser **Math.random() < 0.8** causando 80% de falhas, estava assim **Math.random() > 0.8** causando 20% de falhas na requisição.
